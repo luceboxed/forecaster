@@ -1,2 +1,2 @@
 # forecaster
- i love forecasting
+ i love forecasting and else if statements :D
