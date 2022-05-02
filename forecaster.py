@@ -22,17 +22,6 @@ timezone = pytz.timezone(parse_json["timezone"])
 #please uncomment this when ready
 #print("Weather for " + location_data[int(0)]['name'].upper() + ".")
 
-
-print("Current observations:")
-print("Time is " + timezone.localize(datetime.datetime.fromtimestamp(parse_json["current"]["dt"])).strftime("%d/%m/%Y - %H:%M %p"))
-#list alerts
-if "alerts" in parse_json:
-    alertslist = []
-    for i in range(len(parse_json["alerts"])):
-        alertslist.append(parse_json["alerts"][int(i)]["event"])
-    alerts = ', '.join([str(x) for x in alertslist])
-    print(alerts + " are in effect for this area.")
-
 #cloud cover
 def cloud_cover(percent):
     if percent >= 85:
@@ -80,6 +69,15 @@ def degrees_to_direction(degrees):
     else:
         return "N"
 
+print("Current observations:")
+print("Time is " + timezone.localize(datetime.datetime.fromtimestamp(parse_json["current"]["dt"])).strftime("%d/%m/%Y - %H:%M %p"))
+#list alerts
+if "alerts" in parse_json:
+    alertslist = []
+    for i in range(len(parse_json["alerts"])):
+        alertslist.append(parse_json["alerts"][int(i)]["event"] + " until " + timezone.localize(datetime.datetime.fromtimestamp(parse_json["alerts"][int(i)]["end"])).strftime("%d/%m/%Y - %H:%M %p"))
+    alerts = ', '.join([str(x) for x in alertslist])
+    print(alerts + " are in effect for this area.")
 #check if gusts
 if "wind_gust" in parse_json["current"]:
     gusts = " m/s, gusting to " + str(parse_json["current"]["wind_gust"]) + " m/s"
