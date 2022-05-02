@@ -6,7 +6,7 @@ import os
 
 #this needs a total rewrite before it can be used
 #response_API = requests.get("https://api.openweathermap.org/data/2.5/onecall?lat=31.063&lon=-102.388&units=metric&appid=" + apikey)
-#geocode = requests.get("http://api.openweathermap.org/geo/1.0/reverse?lat=31.063&lon=-102.388&limit=1&appid=" + "bec3a5c0a0f97477df0bd71d095ac65d")
+#geocode = requests.get("http://api.openweathermap.org/geo/1.0/reverse?lat=31.063&lon=-102.388&limit=1&appid=" + apikey)
 #location_data = geocode.json()
 #data = response_API.text
 
