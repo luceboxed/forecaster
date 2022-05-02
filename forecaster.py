@@ -2,6 +2,7 @@ import requests
 import json
 import datetime
 import pytz
+import os
 
 #this needs a total rewrite before it can be used
 #response_API = requests.get("https://api.openweathermap.org/data/2.5/onecall?lat=31.063&lon=-102.388&units=metric&appid=" + apikey)
@@ -10,7 +11,9 @@ import pytz
 #data = response_API.text
 
 #for testing purposes
-with open('E:/projects/forecaster/examplejson.json') as json_file:
+DIR_ABS_PATH = os.path.dirname(__file__)
+EXAMPLE_PATH = os.path.join(DIR_ABS_PATH, 'examplejson.json')
+with open(EXAMPLE_PATH) as json_file:
     data = json.load(json_file)
 parse_json = data
 
@@ -41,38 +44,39 @@ elif parse_json["current"]["clouds"] >= 10:
 
 
 #degrees to direction
-if parse_json["current"]["wind_deg"] > 11.25:
-    wind_direction = "NNE"
-elif parse_json["current"]["wind_deg"] > 33.75:
-    wind_direction = "NE"
-elif parse_json["current"]["wind_deg"] > 56.25:
-    wind_direction = "ENE"
-elif parse_json["current"]["wind_deg"] > 78.75:
-    wind_direction = "E"
-elif parse_json["current"]["wind_deg"] > 101.25:
-    wind_direction = "ESE"
-elif parse_json["current"]["wind_deg"] > 123.75:
-    wind_direction = "SE"
-elif parse_json["current"]["wind_deg"] > 146.25:
-    wind_direction = "SSE"
-elif parse_json["current"]["wind_deg"] > 168.75:
-    wind_direction = "S"
-elif parse_json["current"]["wind_deg"] > 191.25:
-    wind_direction = "SSW"
-elif parse_json["current"]["wind_deg"] > 213.75:
-    wind_direction = "SW"
-elif parse_json["current"]["wind_deg"] > 236.25:
-    wind_direction = "WSW"
-elif parse_json["current"]["wind_deg"] > 258.75:
-    wind_direction = "W"
-elif parse_json["current"]["wind_deg"] > 281.25:
-    wind_direction = "WNW"
-elif parse_json["current"]["wind_deg"] > 303.75:
-    wind_direction = "NW"
-elif parse_json["current"]["wind_deg"] > 326.25:
-    wind_direction = "NNW"
-else:
-    wind_direction = "N"
+def degrees_to_direction(degrees):
+    if degrees > 326.25:
+        return "NNW"
+    elif degrees > 303.75:
+        return "NW"
+    elif degrees > 281.25:
+        return "WNW"
+    elif degrees > 258.75:
+        return "W"
+    elif degrees > 236.25:
+        return "WSW"
+    elif degrees > 213.75:
+        return "SW"
+    elif degrees > 191.25:
+        return "SSW"
+    elif degrees > 168.75:
+        return "S"
+    elif degrees > 146.25:
+        return "SSE"
+    elif degrees > 123.75:
+        return "SE"
+    elif degrees > 101.25:
+        return "ESE"
+    elif degrees > 78.75:
+        return "E"
+    elif degrees > 56.25:
+        return "ENE"
+    elif degrees > 33.75:
+        return "NE"
+    elif degrees > 11.25:
+        return "NNE"
+    else:
+        return "N"
 
 #check if gusts
 if "wind_gust" in parse_json["current"]:
@@ -88,7 +92,7 @@ if parse_json["current"]["uvi"] >= 6:
         print("The UV index is " + str(parse_json["current"]["uvi"]) + " - very high. Avoid the sun between 10am and 4pm. If you cannot, cover up, wear a hat, put on sunglasses, and wear sunglasses.")
     elif parse_json["current"]["uvi"] >= 6:
         print("The UV index is " + str(parse_json["current"]["uvi"]) + " - high. Cover up, wear a hat and use sunscreen.")
-print("Winds " +  wind_direction + " at " + str(parse_json["current"]["wind_speed"]) + gusts + ".")
+print("Winds " +  degrees_to_direction(parse_json["current"]["wind_deg"]) + " at " + str(parse_json["current"]["wind_speed"]) + gusts + ".")
 if "rain" in parse_json["current"]:
     print(str(parse_json["current"]["rain"]["1h"]) + " mm of rain has fallen in the past hour.")
 if "snow" in parse_json["current"]:
@@ -97,7 +101,7 @@ if "snow" in parse_json["current"]:
 print("\nTomorrows forecast:")
 print("High: " + str(parse_json["daily"][int(1)]["temp"]["max"]) + "C - Low: " + str(parse_json["daily"][int(1)]["temp"]["min"]) + "C with " + str(parse_json["daily"][int(1)]["weather"][int(0)]["description"]) + ".")
 print("Morning: " + str(parse_json["daily"][int(1)]["temp"]["morn"]) + "C. Afternoon: " + str(parse_json["daily"][int(1)]["temp"]["day"]) +  "C. Evening: " + str(parse_json["daily"][int(1)]["temp"]["eve"]) + "C. Night: " + str(parse_json["daily"][int(1)]["temp"]["night"]) + "C.")
-print("Winds " +  wind_direction + " at " + str(parse_json["daily"][int(1)]["wind_speed"]) + " m/s.")
+print("Winds " +  degrees_to_direction(parse_json["daily"][int(1)]["wind_deg"]) + " at " + str(parse_json["daily"][int(1)]["wind_speed"]) + " m/s.")
 if "pop" in parse_json["daily"][int(1)]:
     print(str(parse_json["daily"][int(1)]["pop"]) + "% chance of precipation.")
 if "rain" in parse_json["daily"][int(1)]:
@@ -115,7 +119,7 @@ for i in range(1, 8):
     date = datetime.datetime.fromtimestamp(epochtime, tz=timezone).strftime('%d/%m/%Y')
     print(date)
     print("High: " + str(round(parse_json["daily"][int(i)]["temp"]["max"])) + "C - Low: " + str(round(parse_json["daily"][int(i)]["temp"]["min"])) + "C with " + str(parse_json["daily"][int(i)]["weather"][int(0)]["description"]) + ".")
-    print("Winds " +  wind_direction + " at " + str(parse_json["daily"][int(i)]["wind_speed"]) + " m/s.")
+    print("Winds " +  degrees_to_direction(parse_json["daily"][int(i)]["wind_deg"]) + " at " + str(parse_json["daily"][int(i)]["wind_speed"]) + " m/s.")
     if "pop" in parse_json["daily"][int(i)]:
         print(str(parse_json["daily"][int(i)]["pop"]) + "% chance of precipation.")
     print("\n")
