@@ -1,12 +1,15 @@
 import requests
 import json
 import datetime
+import pytz
 
 #response_API = requests.get("https://api.openweathermap.org/data/2.5/onecall?lat=31.063&lon=-102.388&units=metric&appid=" + apikey)
 #data = response_API.text
-with open('E:\projects\stuff and things\jsontest.json') as json_file:
+with open('E:/projects/forecaster/jsontest.json') as json_file:
     data = json.load(json_file)
 parse_json = data
+
+timezone = pytz.timezone(parse_json["timezone"])
 
 print("Current observations:")
 #list alerts
@@ -64,7 +67,7 @@ else:
 
 #check if gusts
 if "wind_gust" in parse_json["current"]:
-    gusts = "m/s, gusting to " + str(parse_json["current"]["wind_gust"]) + " m/s"
+    gusts = " m/s, gusting to " + str(parse_json["current"]["wind_gust"]) + " m/s"
 else:
     gusts = " m/s"
 
@@ -82,15 +85,28 @@ if "rain" in parse_json["current"]:
 if "snow" in parse_json["current"]:
     print(str(parse_json["current"]["snow"]["1h"]) + " mm of snow has fallen in the past hour.")
 
-if parse_json["daily"][int(1)]["clouds"] >= 85:
-    clouds = "cloudy"
-elif parse_json["daily"][int(1)]["clouds"] >= 50:
-    clouds= "mostly cloudy"
-elif parse_json["daily"][int(1)]["clouds"] >= 25:
-    clouds= "partly cloudy"
-elif parse_json["daily"][int(1)]["clouds"] >= 10:
-    clouds = "clear"
-
 print("\nTomorrows forecast:")
-print("High: " + str(parse_json["daily"][int(1)]["temp"]["max"]) + "C - Low: " + str(parse_json["daily"][int(1)]["temp"]["min"]) + "C with " + str(parse_json["daily"][int(1)]["weather"][int(0)]["description"]) + " under " + clouds + " (" + str(parse_json["daily"][int(1)]["clouds"]) + "%) skies.")
-print("Winds " +  wind_direction + " at " + str(parse_json["daily"][int(1)]["wind_speed"]) + gusts + ".")
+print("High: " + str(parse_json["daily"][int(1)]["temp"]["max"]) + "C - Low: " + str(parse_json["daily"][int(1)]["temp"]["min"]) + "C with " + str(parse_json["daily"][int(1)]["weather"][int(0)]["description"]) + ".")
+print("Morning: " + str(parse_json["daily"][int(1)]["temp"]["morn"]) + "C. Afternoon: " + str(parse_json["daily"][int(1)]["temp"]["day"]) +  "C. Evening: " + str(parse_json["daily"][int(1)]["temp"]["eve"]) + "C. Night: " + str(parse_json["daily"][int(1)]["temp"]["night"]) + "C.")
+print("Winds " +  wind_direction + " at " + str(parse_json["daily"][int(1)]["wind_speed"]) + " m/s.")
+if "pop" in parse_json["daily"][int(1)]:
+    print(str(parse_json["daily"][int(1)]["pop"]) + "% chance of precipation.")
+if "rain" in parse_json["daily"][int(1)]:
+    print(str(parse_json["daily"][int(1)]["rain"]) + " mm of rain expected.")
+if "snow" in parse_json["daily"][int(1)]:
+    print(str(parse_json["daily"][int(1)]["snow"]) + " mm of snow expected.")
+#epoch to datetime timezone
+print("Sunrise at " + datetime.datetime.fromtimestamp(parse_json["daily"][int(1)]["sunrise"], tz=timezone).strftime('%H:%M') + " and sunset at " + datetime.datetime.fromtimestamp(parse_json["daily"][int(1)]["sunset"], tz=timezone).strftime('%H:%M') + ".")
+
+#5 day forecast
+print("\n5 day forecast:")
+for i in range(1, 6):
+    epochtime = parse_json["daily"][int(i)]["dt"]
+    #epoch to datetime with timezone
+    date = datetime.datetime.fromtimestamp(epochtime, tz=timezone).strftime('%d/%m/%Y')
+    print(date)
+    print("High: " + str(round(parse_json["daily"][int(i)]["temp"]["max"])) + "C - Low: " + str(round(parse_json["daily"][int(i)]["temp"]["min"])) + "C with " + str(parse_json["daily"][int(i)]["weather"][int(0)]["description"]) + ".")
+    print("Winds " +  wind_direction + " at " + str(parse_json["daily"][int(i)]["wind_speed"]) + " m/s.")
+    if "pop" in parse_json["daily"][int(i)]:
+        print(str(parse_json["daily"][int(i)]["pop"]) + "% chance of precipation.")
+    print("\n")
