@@ -4,12 +4,20 @@ import datetime
 import pytz
 
 #response_API = requests.get("https://api.openweathermap.org/data/2.5/onecall?lat=31.063&lon=-102.388&units=metric&appid=" + apikey)
+#geocode = requests.get("http://api.openweathermap.org/geo/1.0/reverse?lat=31.063&lon=-102.388&limit=1&appid=" + "bec3a5c0a0f97477df0bd71d095ac65d")
+#location_data = geocode.json()
 #data = response_API.text
-with open('E:/projects/forecaster/jsontest.json') as json_file:
+
+#for testing purposes
+with open('E:/projects/forecaster/examplejson.json') as json_file:
     data = json.load(json_file)
 parse_json = data
 
 timezone = pytz.timezone(parse_json["timezone"])
+
+#please uncomment this when ready
+#print("Weather for " + location_data[int(0)]['name'].upper() + ".")
+
 
 print("Current observations:")
 #list alerts
