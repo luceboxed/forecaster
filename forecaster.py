@@ -33,14 +33,15 @@ if "alerts" in parse_json:
     print(alerts + " are in effect for this area.")
 
 #cloud cover
-if parse_json["current"]["clouds"] >= 85:
-    clouds = "cloudy"
-elif parse_json["current"]["clouds"] >= 50:
-    clouds = "mostly cloudy"
-elif parse_json["current"]["clouds"] >= 25:
-    clouds = "partly cloudy"
-elif parse_json["current"]["clouds"] >= 10:
-    clouds = "clear"
+def cloud_cover(percent):
+    if percent >= 85:
+        return "cloudy"
+    elif percent >= 50:
+        return "mostly cloudy"
+    elif percent >= 25:
+        return "partly cloudy"
+    elif percent >= 10:
+       return "clear"
 
 
 #degrees to direction
@@ -84,7 +85,7 @@ if "wind_gust" in parse_json["current"]:
 else:
     gusts = " m/s"
 
-print("Currently the temperature is " + str(parse_json["current"]["temp"]) + "C - feeling like " + str(parse_json["current"]["feels_like"]) + "C - with " + str(parse_json["current"]["weather"][0]["description"]) + " under " + clouds + " (" + str(parse_json["current"]["clouds"]) +  "%) skies.")
+print("Currently the temperature is " + str(parse_json["current"]["temp"]) + "C - feeling like " + str(parse_json["current"]["feels_like"]) + "C - with " + str(parse_json["current"]["weather"][0]["description"]) + " under " + cloud_cover(parse_json["current"]["clouds"]) + " (" + str(parse_json["current"]["clouds"]) +  "%) skies.")
 if parse_json["current"]["uvi"] >= 6:
     if parse_json["current"]["uvi"] >= 11:
         print("The UV index is " + str(parse_json["current"]["uvi"]) + " - extremely high. Avoid the sun between 10am and 4pm. Find shade, cover up, wear a hat and sunglasses, and put on sunscreen.")
@@ -93,6 +94,7 @@ if parse_json["current"]["uvi"] >= 6:
     elif parse_json["current"]["uvi"] >= 6:
         print("The UV index is " + str(parse_json["current"]["uvi"]) + " - high. Cover up, wear a hat and use sunscreen.")
 print("Winds " +  degrees_to_direction(parse_json["current"]["wind_deg"]) + " at " + str(parse_json["current"]["wind_speed"]) + gusts + ".")
+print("Humidity is " + str(parse_json["current"]["humidity"]) + "%.")
 if "rain" in parse_json["current"]:
     print(str(parse_json["current"]["rain"]["1h"]) + " mm of rain has fallen in the past hour.")
 if "snow" in parse_json["current"]:
@@ -102,6 +104,7 @@ print("\nTomorrows forecast:")
 print("High: " + str(parse_json["daily"][int(1)]["temp"]["max"]) + "C - Low: " + str(parse_json["daily"][int(1)]["temp"]["min"]) + "C with " + str(parse_json["daily"][int(1)]["weather"][int(0)]["description"]) + ".")
 print("Morning: " + str(parse_json["daily"][int(1)]["temp"]["morn"]) + "C. Afternoon: " + str(parse_json["daily"][int(1)]["temp"]["day"]) +  "C. Evening: " + str(parse_json["daily"][int(1)]["temp"]["eve"]) + "C. Night: " + str(parse_json["daily"][int(1)]["temp"]["night"]) + "C.")
 print("Winds " +  degrees_to_direction(parse_json["daily"][int(1)]["wind_deg"]) + " at " + str(parse_json["daily"][int(1)]["wind_speed"]) + " m/s.")
+print("Humidity will be " + str(parse_json["daily"][int(1)]["humidity"]) + "%.")
 if "pop" in parse_json["daily"][int(1)]:
     print(str(parse_json["daily"][int(1)]["pop"]) + "% chance of precipation.")
 if "rain" in parse_json["daily"][int(1)]:
@@ -110,7 +113,6 @@ if "snow" in parse_json["daily"][int(1)]:
     print(str(parse_json["daily"][int(1)]["snow"]) + " mm of snow expected.")
 #epoch to datetime timezone
 print("Sunrise at " + datetime.datetime.fromtimestamp(parse_json["daily"][int(1)]["sunrise"], tz=timezone).strftime('%H:%M') + " and sunset at " + datetime.datetime.fromtimestamp(parse_json["daily"][int(1)]["sunset"], tz=timezone).strftime('%H:%M') + ".")
-
 #5 day forecast
 print("\n7 day forecast:")
 for i in range(1, 8):
@@ -120,6 +122,7 @@ for i in range(1, 8):
     print(date)
     print("High: " + str(round(parse_json["daily"][int(i)]["temp"]["max"])) + "C - Low: " + str(round(parse_json["daily"][int(i)]["temp"]["min"])) + "C with " + str(parse_json["daily"][int(i)]["weather"][int(0)]["description"]) + ".")
     print("Winds " +  degrees_to_direction(parse_json["daily"][int(i)]["wind_deg"]) + " at " + str(parse_json["daily"][int(i)]["wind_speed"]) + " m/s.")
+    print("Sunrise at " + datetime.datetime.fromtimestamp(parse_json["daily"][int(i)]["sunrise"], tz=timezone).strftime('%H:%M') + " and sunset at " + datetime.datetime.fromtimestamp(parse_json["daily"][int(i)]["sunset"], tz=timezone).strftime('%H:%M') + ".")
     if "pop" in parse_json["daily"][int(i)]:
         print(str(parse_json["daily"][int(i)]["pop"]) + "% chance of precipation.")
     print("\n")
