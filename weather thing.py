@@ -71,7 +71,7 @@ if "wind_gust" in parse_json["current"]:
 else:
     gusts = " m/s"
 
-print("Currently the temperature is " + str(parse_json["current"]["temp"]) + " degrees Celsius - feeling like " + str(parse_json["current"]["feels_like"]) + "C - with " + str(parse_json["current"]["weather"][0]["description"]) + " under " + clouds + " (" + str(parse_json["current"]["clouds"]) +  "%) skies.")
+print("Currently the temperature is " + str(parse_json["current"]["temp"]) + "C - feeling like " + str(parse_json["current"]["feels_like"]) + "C - with " + str(parse_json["current"]["weather"][0]["description"]) + " under " + clouds + " (" + str(parse_json["current"]["clouds"]) +  "%) skies.")
 if parse_json["current"]["uvi"] >= 6:
     if parse_json["current"]["uvi"] >= 11:
         print("The UV index is " + str(parse_json["current"]["uvi"]) + " - extremely high. Avoid the sun between 10am and 4pm. Find shade, cover up, wear a hat and sunglasses, and put on sunscreen.")
