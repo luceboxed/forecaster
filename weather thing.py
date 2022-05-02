@@ -99,8 +99,8 @@ if "snow" in parse_json["daily"][int(1)]:
 print("Sunrise at " + datetime.datetime.fromtimestamp(parse_json["daily"][int(1)]["sunrise"], tz=timezone).strftime('%H:%M') + " and sunset at " + datetime.datetime.fromtimestamp(parse_json["daily"][int(1)]["sunset"], tz=timezone).strftime('%H:%M') + ".")
 
 #5 day forecast
-print("\n5 day forecast:")
-for i in range(1, 6):
+print("\n7 day forecast:")
+for i in range(1, 8):
     epochtime = parse_json["daily"][int(i)]["dt"]
     #epoch to datetime with timezone
     date = datetime.datetime.fromtimestamp(epochtime, tz=timezone).strftime('%d/%m/%Y')
