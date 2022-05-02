@@ -86,6 +86,7 @@ else:
     gusts = " m/s"
 
 print("Currently the temperature is " + str(parse_json["current"]["temp"]) + "C - feeling like " + str(parse_json["current"]["feels_like"]) + "C - with " + str(parse_json["current"]["weather"][0]["description"]) + " under " + cloud_cover(parse_json["current"]["clouds"]) + " (" + str(parse_json["current"]["clouds"]) +  "%) skies.")
+print("The next 2 hours will have the current " + str(parse_json["hourly"][int(0)]["weather"][int(0)]["description"]) + " changing to " + str(parse_json["hourly"][int(1)]["weather"][int(0)]["description"]) + " in an hour, finally changing to " + str(parse_json["hourly"][int(2)]["weather"][int(0)]["description"]) + " in 2 hours.")
 if parse_json["current"]["uvi"] >= 6:
     if parse_json["current"]["uvi"] >= 11:
         print("The UV index is " + str(parse_json["current"]["uvi"]) + " - extremely high. Avoid the sun between 10am and 4pm. Find shade, cover up, wear a hat and sunglasses, and put on sunscreen.")
