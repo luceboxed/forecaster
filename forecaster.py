@@ -24,6 +24,7 @@ timezone = pytz.timezone(parse_json["timezone"])
 
 
 print("Current observations:")
+print("Time is " + timezone.localize(datetime.datetime.fromtimestamp(parse_json["current"]["dt"])).strftime("%d/%m/%Y - %H:%M %p"))
 #list alerts
 if "alerts" in parse_json:
     alertslist = []
