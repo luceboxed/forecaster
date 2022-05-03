@@ -79,12 +79,12 @@ def degrees_to_direction(degrees):
         return "N"
 
 print("Current observations:")
-print("Time is " + timezone.localize(datetime.datetime.fromtimestamp(parse_json["current"]["dt"])).strftime("%d/%m/%Y - %H:%M %p"))
+print("Time is " + datetime.datetime.fromtimestamp(parse_json["current"]["dt"], tz=timezone).strftime('%H:%M %p - %d/%m/%Y'))
 #list alerts
 if "alerts" in parse_json:
     alertslist = []
     for i in range(len(parse_json["alerts"])):
-        alertslist.append(parse_json["alerts"][int(i)]["event"] + " until " + timezone.localize(datetime.datetime.fromtimestamp(parse_json["alerts"][int(i)]["end"])).strftime("%d/%m/%Y - %H:%M %p") + " (expires in " + str(int((parse_json["alerts"][int(i)]["end"] - parse_json["current"]["dt"])/3600)) + " hours)")
+        alertslist.append(parse_json["alerts"][int(i)]["event"] + " until " + datetime.datetime.fromtimestamp(parse_json["alerts"][int(i)]["end"], tz=timezone).strftime("%d/%m/%Y - %H:%M %p") + " (expires in " + str(int((parse_json["alerts"][int(i)]["end"] - parse_json["current"]["dt"]) / 3600)) + " hours)")
     alerts = ', '.join([str(x) for x in alertslist])
     print(alerts + " are in effect for this area.")
 #check if gusts
