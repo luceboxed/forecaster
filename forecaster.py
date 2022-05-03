@@ -8,9 +8,20 @@ DIR_ABS_PATH = os.path.dirname(__file__)
 apijson = open(os.path.join(DIR_ABS_PATH,"config.json"))
 apikey = json.load(apijson)["apikey"]
 
-lat = input("Please enter the latitude of your location.\n> ")
-lon = input("Please enter the longitude of your location.\n> ")
-
+def isfloat(value):
+  try:
+    float(value)
+    return True
+  except ValueError:
+    return False
+while True:
+    print("if it crashes here you entered in something wrong")
+    lat = input("Please enter the latitude of your location.\n> ")
+    lon = input("Please enter the longitude of your location.\n> ")
+    if isfloat(lat) == False or isfloat(lon) == False:
+        print("One of your coordinates isn't a number. Please try again.")
+    else:
+        break
 #this needs a total rewrite before it can be used
 response_API = requests.get("https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + apikey)
 print(str(response_API))
@@ -18,7 +29,10 @@ data = response_API.text
 parse_json = json.loads(data)
 geocode = requests.get("http://api.openweathermap.org/geo/1.0/reverse?lat=" + lat + "&lon=" + lon + "&limit=1&appid=" + apikey)
 location_data = geocode.json()
-
+try:
+    location_name = location_data[int(0)]['name']
+except :
+    location_name = "Unknown"
 #for testing purposes
 """ EXAMPLE_PATH = os.path.join(DIR_ABS_PATH, 'examplejson.json')
 with open(EXAMPLE_PATH) as json_file:
@@ -28,7 +42,7 @@ parse_json = data """
 timezone = pytz.timezone(parse_json["timezone"])
 
 #please uncomment this when ready
-print("Weather for " + location_data[int(0)]['name'].upper() + ".")
+print("Weather for " + location_name.upper() + ".")
 
 #cloud cover
 def cloud_cover(percent):
