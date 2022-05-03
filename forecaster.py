@@ -3,6 +3,8 @@ import json
 import datetime
 import pytz
 import os
+import random
+from libraries import unknown_gossip, drizzle_gossip
 
 DIR_ABS_PATH = os.path.dirname(__file__)
 apijson = open(os.path.join(DIR_ABS_PATH,"config.json"))
@@ -94,6 +96,15 @@ def degrees_to_direction(degrees):
         return "NNE"
     else:
         return "N"
+
+#say funny shit, computer        
+"""print("")
+if location_name == "Unknown":
+    print(random.choice(unknown_gossip))
+elif parse_json["current"]["weather"][int(0)]["main"] == "Drizzle":
+    print(random.choice(drizzle_gossip))
+print("")"""
+
 
 print("Current observations:")
 print("Time is " + datetime.datetime.fromtimestamp(parse_json["current"]["dt"], tz=timezone).strftime('%H:%M %p - %d/%m/%Y'))
