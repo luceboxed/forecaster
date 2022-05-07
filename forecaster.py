@@ -4,7 +4,6 @@ import datetime
 import pytz
 import os
 import random
-from libraries import unknown_gossip, drizzle_gossip
 
 DIR_ABS_PATH = os.path.dirname(__file__)
 apijson = open(os.path.join(DIR_ABS_PATH,"config.json"))
@@ -44,7 +43,7 @@ parse_json = data """
 timezone = pytz.timezone(parse_json["timezone"])
 
 #please uncomment this when ready
-print("Weather for " + location_name.upper() + ".")
+print("Hello " + location_name.upper() + "! This is your weather.")
 
 #cloud cover
 def cloud_cover(percent):
@@ -97,22 +96,23 @@ def degrees_to_direction(degrees):
     else:
         return "N"
 
-#say funny shit, computer        
-"""print("")
-if location_name == "Unknown":
-    print(random.choice(unknown_gossip))
-elif parse_json["current"]["weather"][int(0)]["main"] == "Drizzle":
-    print(random.choice(drizzle_gossip))
-print("")"""
-
-
 print("Current observations:")
 print("Time is " + datetime.datetime.fromtimestamp(parse_json["current"]["dt"], tz=timezone).strftime('%H:%M %p - %d/%m/%Y'))
 #list alerts
 if "alerts" in parse_json:
     alertslist = []
     for i in range(len(parse_json["alerts"])):
-        alertslist.append(parse_json["alerts"][int(i)]["event"] + " until " + datetime.datetime.fromtimestamp(parse_json["alerts"][int(i)]["end"], tz=timezone).strftime("%d/%m/%Y - %H:%M %p") + " (expires in " + str(int((parse_json["alerts"][int(i)]["end"] - parse_json["current"]["dt"]) / 3600)) + " hours)")
+        timeleft = int(parse_json["alerts"][int(i)]["end"] - parse_json["current"]["dt"]) / 3600
+        if timeleft >= 24:
+            timeleft = round(timeleft / 24, 2)
+            timedivison = "days"
+        elif timeleft >= 1:
+            timeleft = round(timeleft, 1)
+            timedivison = "hours"
+        else:
+            timeleft = round(timeleft * 60, 1)
+            timedivison = "minutes"
+        alertslist.append(parse_json["alerts"][int(i)]["event"] + " until " + datetime.datetime.fromtimestamp(parse_json["alerts"][int(i)]["end"], tz=timezone).strftime("%d/%m/%Y - %H:%M %p") + " (expires in " +  str(timeleft) + " " + timedivison + ")")
     alerts = ', '.join([str(x) for x in alertslist])
     print(alerts + " are in effect for this area.")
 #check if gusts
