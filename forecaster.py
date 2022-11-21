@@ -1,7 +1,10 @@
+#API
 import requests
 import json
+#TIME
 import datetime
 import pytz
+#OTHER
 import os
 import random
 
@@ -23,7 +26,6 @@ while True:
         print("One of your coordinates isn't a number. Please try again.")
     else:
         break
-#this needs a total rewrite before it can be used
 response_API = requests.get("https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + apikey)
 print(str(response_API))
 data = response_API.text
@@ -35,10 +37,11 @@ try:
 except :
     location_name = "Unknown"
 #for testing purposes
-""" EXAMPLE_PATH = os.path.join(DIR_ABS_PATH, 'examplejson.json')
+"""EXAMPLE_PATH = os.path.join(DIR_ABS_PATH, 'examplejson.json')
 with open(EXAMPLE_PATH) as json_file:
     data = json.load(json_file)
 parse_json = data """
+#uncomment all this to use the example
 
 timezone = pytz.timezone(parse_json["timezone"])
 
@@ -167,3 +170,77 @@ for i in range(1, 8):
     if "snow" in parse_json["daily"][int(i)]:
         print(str(parse_json["daily"][int(i)]["snow"]) + " mm of snow expected.")
     print("\n")
+
+def create_summary(day):
+    #create a summary of the weather
+    sumtemp = ""
+    if day["temp"]["max"] >= 37:
+        sumtemp = random.choice(["Blazing. ", "Sweltering. ", "Scorching. "])
+    elif day["temp"]["max"] >= 29:
+        sumtemp = "Hot "
+    elif day["temp"]["max"] >= 25:
+        sumtemp = random.choice(["Warm. ", ""])
+    elif day["temp"]["max"] >= 15:
+        sumtemp = ""
+    elif day["temp"]["max"] >= 7:
+        sumtemp = random.choice(["Cool. ", ""])
+    elif day["temp"]["max"] <= 0 or day["temp"]["max"] <= -1:
+        sumtemp = random.choice(["Freezing. ", "Frigid. "])
+    elif day["temp"]["max"] <= 5:
+        sumtemp = "Cold "
+    
+    if "wind_gust" in day:
+        gust = day["wind_gust"]
+    else:
+        gust = "0"
+
+    if gust >= day["wind_speed"] + 2:
+        gustsum = " - gusting up to " + str(gust) + " m/s"
+    else:
+        gustsum = ""
+
+    if day["wind_speed"] >= 49:
+        windsum = "Major hurricane conditions likely, with w"
+    elif day["wind_speed"] >= 33:
+        windsum = "Hurricane conditions likely, with w"
+    elif day["wind_speed"] >= 28:
+        windsum = "Tropical storm coniditons likely, with w"
+    elif day["wind_speed"] >= 25:
+        windsum = "Extreme wind, with w"
+    elif day["wind_speed"] >= 17:
+        windsum = "High wind, with w"
+    elif day["wind_speed"] >= 11:
+        windsum = "Very windy, with w"
+    elif day["wind_speed"] >= 8:
+        windsum = "Windy, with w"
+    elif day["wind_speed"] >= 5:
+        windsum = "Breezy, with w"
+    elif day["wind_speed"] >= 3:
+        windsum = random.choice(["Light breeze, with w", "W"])
+    else:
+        windsum = random.choice(["Calm, with w", "W"])
+
+    uvisum = ""
+    if day["uvi"] >= 6:
+        if day["uvi"] >= 11:
+            uvisum = "Extremely high UV index. Use sunscreen, sunglasses, and a hat. Avoid the sun if possible."
+        elif day["uvi"] >= 8:
+            uvisum = "Very high UV index. Use sunscreen, sunglasses, and a hat. Avoid the sun from 11am to 4pm."
+    
+    if "pop" in day:
+        precipsum = str(day["pop"]) + "% chance of precipitation"
+        if "rain" in day:
+            precipsum += " - with " + str(day["rain"]) + " mm of rain possible"
+        elif "snow" in day:
+            precipsum += " - with " + str(day["snow"]) + " mm of snow possible"
+        precipsum += ". "
+    else:
+        precipsum = ""
+
+    print(datetime.datetime.fromtimestamp(day["dt"], tz=timezone).strftime('%A') + "\n" + sumtemp + str(day["weather"][int(0)]["description"].capitalize()) + " with a high of " + str(round(day["temp"]["max"], 1)) + "C and a low of " + str(round(day["temp"]["min"], 1)) + "C. " + windsum + "inds " +  degrees_to_direction(day["wind_deg"]) + " at " + str(day["wind_speed"]) + " m/s" + gustsum + ". " + precipsum + uvisum + "")
+
+create_summary(parse_json["daily"][int(1)])
+create_summary(parse_json["daily"][int(2)])
+create_summary(parse_json["daily"][int(3)])
+create_summary(parse_json["daily"][int(4)])
+create_summary(parse_json["daily"][int(5)])
